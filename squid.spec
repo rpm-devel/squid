@@ -1,23 +1,18 @@
-%if 0%{?el7}
-%define dist .el7
-%endif
-
 %define __perl_requires %{SOURCE98}
 
 Packager:       momo-i <webmaster@momo-i.org>
 Vendor:         momo-i, http://www.momo-i.org/
 
 Name:     squid
-Version:  4.0.18
+Version:  7.5
 Release:  1%{?dist}
 Summary:  The Squid proxy caching server
 Epoch:    7
 # See CREDITS for breakdown of non GPLv2+ code
 License:  GPLv2+ and (LGPLv2+ and MIT and BSD and Public Domain)
-Group:    System Environment/Daemons
 URL:      http://www.squid-cache.org
-Source0:  http://www.squid-cache.org/Versions/v4/squid-%{version}.tar.xz
-Source1:  http://www.squid-cache.org/Versions/v4/squid-%{version}.tar.xz.asc
+Source0:  http://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz
+Source1:  http://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz.asc
 Source2:  squid.logrotate
 Source3:  squid.sysconfig
 Source4:  squid.pam
@@ -31,15 +26,6 @@ Source98: perl-requires-squid.sh
 
 # Backported patches
 
-# Local patches
-# Applying upstream patches first makes it less likely that local patches
-# will break upstream ones.
-Patch201: 0001-squid-4.0.18-config.patch
-Patch202: 0002-squid-4.0.18-location.patch
-Patch203: 0003-squid-4.0.18-perlpath.patch
-Patch204: 0004-squid-4.0.18-include-guards.patch
-
-Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: bash >= 2.0
 Requires(pre): shadow-utils
 Requires(post): /sbin/chkconfig
@@ -74,6 +60,7 @@ BuildRequires: pkgconfig(cppunit)
 BuildRequires: autoconf
 # For 4.0.5
 BuildRequires: samba-client
+Obsoletes: squid < %{version}-%{release}
 
 %description
 Squid is a high-performance proxy caching server for Web clients,
@@ -93,12 +80,6 @@ lookup program (dnsserver), a program for retrieving FTP data
 # Upstream patches
 
 # Backported patches
-
-# Local patches
-%patch201 -p1 -b .config
-%patch202 -p1 -b .location
-%patch203 -p1 -b .perlpath
-%patch204 -p1 -b .include-guards
 
 %build
 # cppunit-config patch changes configure.ac
@@ -212,11 +193,7 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/squid/squid.conf.documented
 rm -f $RPM_BUILD_ROOT%{_bindir}/{RunAccel,RunCache}
 rm -f $RPM_BUILD_ROOT/squid.httpd.tmp
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
-%defattr(-,root,root,-)
 %doc CONTRIBUTORS README ChangeLog QUICKSTART src/squid.conf.documented
 %doc contrib/url-normalizer.pl contrib/user-agents.pl
 %{!?_licensedir:%global license %%doc}
@@ -293,6 +270,10 @@ fi
 
 
 %changelog
+* Fri Apr 24 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.5-1
+- Update to 7.5
+- Modernize spec for EL10
+
 * Sat Mar 11 2017 momo-i <webmaster@momo-i.org> - 7:4.0.18-1
 - Update to 4.0.18
 
