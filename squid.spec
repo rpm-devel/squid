@@ -1,4 +1,4 @@
-%define __perl_requires %{SOURCE98}
+%global __perl_requires %{SOURCE98}
 
 Packager:       momo-i <webmaster@momo-i.org>
 Vendor:         momo-i, http://www.momo-i.org/
@@ -142,9 +142,9 @@ make \
 make check
 	
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 make \
-	DESTDIR=$RPM_BUILD_ROOT \
+	DESTDIR=%{buildroot} \
 	install
 echo "
 #
@@ -158,40 +158,40 @@ ScriptAlias /Squid/cgi-bin/cachemgr.cgi %{_libdir}/squid/cachemgr.cgi
  Require local
  # Add additional allowed hosts as needed
  # Require host example.com
-</Location>" > $RPM_BUILD_ROOT/squid.httpd.tmp
+</Location>" > %{buildroot}/squid.httpd.tmp
 
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/NetworkManager/dispatcher.d
-mkdir -p $RPM_BUILD_ROOT%{_unitdir}
-mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/squid
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/squid
-install -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/squid
-install -m 644 %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/squid
-install -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_unitdir}
-install -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{_libexecdir}/squid
-install -m 644 $RPM_BUILD_ROOT/squid.httpd.tmp $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/squid.conf
-install -m 644 %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/NetworkManager/dispatcher.d/20-squid
-mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/squid
-mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/squid
+mkdir -p %{buildroot}%{_sysconfdir}/rc.d/init.d
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+mkdir -p %{buildroot}%{_sysconfdir}/pam.d
+mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/NetworkManager/dispatcher.d
+mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}%{_libexecdir}/squid
+install -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/logrotate.d/squid
+install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/squid
+install -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/pam.d/squid
+install -m 644 %{SOURCE6} %{buildroot}%{_unitdir}
+install -m 755 %{SOURCE7} %{buildroot}%{_libexecdir}/squid
+install -m 644 %{buildroot}/squid.httpd.tmp %{buildroot}%{_sysconfdir}/httpd/conf.d/squid.conf
+install -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/NetworkManager/dispatcher.d/20-squid
+mkdir -p %{buildroot}%{_localstatedir}/log/squid
+mkdir -p %{buildroot}%{_localstatedir}/spool/squid
 chmod 644 contrib/url-normalizer.pl contrib/user-agents.pl
 iconv -f ISO88591 -t UTF8 ChangeLog -o ChangeLog.tmp
 mv -f ChangeLog.tmp ChangeLog
 
 # Move the MIB definition to the proper place (and name)
-mkdir -p $RPM_BUILD_ROOT/usr/share/snmp/mibs
-mv $RPM_BUILD_ROOT/usr/share/squid/mib.txt $RPM_BUILD_ROOT/usr/share/snmp/mibs/SQUID-MIB.txt
+mkdir -p %{buildroot}/usr/share/snmp/mibs
+mv %{buildroot}/usr/share/squid/mib.txt %{buildroot}/usr/share/snmp/mibs/SQUID-MIB.txt
 
 # squid.conf.documented is documentation. We ship that in doc/
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/squid/squid.conf.documented
+rm -f %{buildroot}%{_sysconfdir}/squid/squid.conf.documented
 
 # remove unpackaged files from the buildroot
-rm -f $RPM_BUILD_ROOT%{_bindir}/{RunAccel,RunCache}
-rm -f $RPM_BUILD_ROOT/squid.httpd.tmp
+rm -f %{buildroot}%{_bindir}/{RunAccel,RunCache}
+rm -f %{buildroot}/squid.httpd.tmp
 
 %files
 %doc CONTRIBUTORS README ChangeLog QUICKSTART src/squid.conf.documented
@@ -270,6 +270,9 @@ fi
 
 
 %changelog
+* Fri May 22 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.5-1
+- Fix spec violations: use %{buildroot}, %global for constants
+
 * Fri Apr 24 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.5-1
 - Update to 7.5
 - Modernize spec for EL10
