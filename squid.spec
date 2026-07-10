@@ -1,18 +1,16 @@
 %global __perl_requires %{SOURCE98}
 
-Packager:       momo-i <webmaster@momo-i.org>
-Vendor:         momo-i, http://www.momo-i.org/
-
 Name:     squid
-Version:  7.5
+Version:  7.6
 Release:  1%{?dist}
 Summary:  The Squid proxy caching server
 Epoch:    7
 # See CREDITS for breakdown of non GPLv2+ code
-License:  GPLv2+ and (LGPLv2+ and MIT and BSD and Public Domain)
-URL:      http://www.squid-cache.org
-Source0:  http://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz
-Source1:  http://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz.asc
+License:  GPL-2.0-or-later AND (LGPL-2.0-or-later AND MIT AND BSD-3-Clause AND LicenseRef-public-domain)
+URL:      https://www.squid-cache.org
+ExclusiveArch: x86_64 aarch64
+Source0:  https://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz
+Source1:  https://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz.asc
 Source2:  squid.logrotate
 Source3:  squid.sysconfig
 Source4:  squid.pam
@@ -28,11 +26,7 @@ Source98: perl-requires-squid.sh
 
 Requires: bash >= 2.0
 Requires(pre): shadow-utils
-Requires(post): /sbin/chkconfig
-Requires(preun): /sbin/chkconfig
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
+%{?systemd_requires}
 # squid_ldap_auth and other LDAP helpers require OpenLDAP
 BuildRequires: openldap-devel
 # squid_pam_auth requires PAM development libs
@@ -58,6 +52,7 @@ BuildRequires: libtool libtool-ltdl-devel
 # For test suite
 BuildRequires: pkgconfig(cppunit)
 BuildRequires: autoconf
+BuildRequires: systemd-rpm-macros
 # For 4.0.5
 BuildRequires: samba-client
 Obsoletes: squid < %{version}-%{release}
@@ -75,7 +70,7 @@ lookup program (dnsserver), a program for retrieving FTP data
 (ftpget), and some management and client tools.
 
 %prep
-%setup -q
+%autosetup -p1
 
 # Upstream patches
 
@@ -134,18 +129,13 @@ LDFLAGS="$RPM_LD_FLAGS -pie -Wl,-z,relro -Wl,-z,now -Wl,--warn-shared-textrel"
    --disable-arch-native \
    --with-pic
 
-make \
-	DEFAULT_SWAP_DIR=%{_localstatedir}/spool/squid \
-	%{?_smp_mflags}
+%make_build DEFAULT_SWAP_DIR=%{_localstatedir}/spool/squid
 
 %check
-make check
+%make_build check
 	
 %install
-rm -rf %{buildroot}
-make \
-	DESTDIR=%{buildroot} \
-	install
+%make_install
 echo "
 #
 # This is %{_sysconfdir}/httpd/conf.d/squid.conf
@@ -196,7 +186,6 @@ rm -f %{buildroot}/squid.httpd.tmp
 %files
 %doc CONTRIBUTORS README ChangeLog QUICKSTART src/squid.conf.documented
 %doc contrib/url-normalizer.pl contrib/user-agents.pl
-%{!?_licensedir:%global license %%doc}
 %license COPYING
 
 %{_unitdir}/squid.service
@@ -270,6 +259,17 @@ fi
 
 
 %changelog
+* Sat Jul 05 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.6-1
+- Update to 7.6
+- URL/Source0/Source1: http -> https
+- Verified Source0 downloadable
+
+* Thu Jul 03 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.5-1
+- SPDX license; add ExclusiveArch: x86_64 aarch64
+- Remove deprecated Packager/Vendor tags, /sbin/chkconfig Requires, and %%{!?_licensedir} compat
+- Replace bare systemd Requires with %%{?systemd_requires}; add BuildRequires: systemd-rpm-macros
+- %%autosetup -p1; %%make_build; %%make_install; remove deprecated rm -rf %%{buildroot}
+
 * Fri May 22 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.5-1
 - Fix spec violations: use %{buildroot}, %global for constants
 
