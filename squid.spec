@@ -1,5 +1,21 @@
 %global __perl_requires %{SOURCE98}
 
+%if 0%{?suse_version}
+%global shadow_pkg      shadow
+%global openssl_pkg     libopenssl-devel
+%global openldap_pkg    openldap2-devel
+%global expat_pkg       libexpat-devel
+%global libdb_pkg       libdb-4_8-devel
+%global libdb2_pkg      libdb-4_8-devel
+%else
+%global shadow_pkg      shadow-utils
+%global openssl_pkg     openssl-devel
+%global openldap_pkg    openldap-devel
+%global expat_pkg       expat-devel
+%global libdb_pkg       libdb4-devel
+%global libdb2_pkg      libdb-devel
+%endif
+
 Name:     squid
 Version:  7.6
 Release:  1%{?dist}
@@ -25,22 +41,22 @@ Source98: perl-requires-squid.sh
 # Backported patches
 
 Requires: bash >= 2.0
-Requires(pre): shadow-utils
+Requires(pre): %{shadow_pkg}
 %{?systemd_requires}
 # squid_ldap_auth and other LDAP helpers require OpenLDAP
-BuildRequires: openldap-devel
+BuildRequires: %{openldap_pkg}
 # squid_pam_auth requires PAM development libs
 BuildRequires: pam-devel
 # SSL support requires OpenSSL
-BuildRequires: openssl-devel
+BuildRequires: %{openssl_pkg}
 # squid_kerb_aut requires Kerberos development libs
 BuildRequires: krb5-devel
 # squid_session_auth requires DB4
-BuildRequires: libdb4-devel
+BuildRequires: %{libdb_pkg}
 # time_quota requires DB
-BuildRequires: libdb-devel
+BuildRequires: %{libdb2_pkg}
 # ESI support requires Expat & libxml2
-BuildRequires: expat-devel libxml2-devel
+BuildRequires: %{expat_pkg} libxml2-devel
 # TPROXY requires libcap, and also increases security somewhat
 BuildRequires: libcap-devel
 # eCAP support
@@ -260,6 +276,13 @@ fi
 
 %changelog
 * Sat Jul 05 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.6-1
+- Multi-distro: guard openSUSE/SLES package name divergences with
+  %if 0%%{?suse_version} globals: shadow (shadow-utils), libopenssl-devel
+  (openssl-devel), openldap2-devel (openldap-devel), libexpat-devel
+  (expat-devel), libdb-4_8-devel (libdb4-devel/libdb-devel)
+- Verified pam-devel, krb5-devel, libcap-devel, libxml2-devel,
+  libecap-devel, gcc-c++, libtool(-ltdl-devel), samba-client,
+  systemd-rpm-macros are identically named on openSUSE/SLES; left unguarded
 - Update to 7.6
 - URL/Source0/Source1: http -> https
 - Verified Source0 downloadable
