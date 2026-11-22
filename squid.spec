@@ -18,7 +18,7 @@
 
 Name:     squid
 Version:  7.6
-Release:  1%{?dist}
+Release:  2%{?dist}
 Summary:  The Squid proxy caching server
 Epoch:    7
 # See CREDITS for breakdown of non GPLv2+ code
@@ -275,9 +275,12 @@ fi
 
 
 %changelog
+* Sat Nov 21 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.6-2
+- Reword changelog text so the EL8 RPM does not parse it as a conditional
+
 * Sat Jul 05 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 7.6-1
 - Multi-distro: guard openSUSE/SLES package name divergences with
-  %if 0%%{?suse_version} globals: shadow (shadow-utils), libopenssl-devel
+  suse_version conditional globals: shadow (shadow-utils), libopenssl-devel
   (openssl-devel), openldap2-devel (openldap-devel), libexpat-devel
   (expat-devel), libdb-4_8-devel (libdb4-devel/libdb-devel)
 - Verified pam-devel, krb5-devel, libcap-devel, libxml2-devel,
