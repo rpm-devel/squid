@@ -25,8 +25,8 @@ Epoch:    7
 License:  GPL-2.0-or-later AND (LGPL-2.0-or-later AND MIT AND BSD-3-Clause AND LicenseRef-public-domain)
 URL:      https://www.squid-cache.org
 ExclusiveArch: x86_64 aarch64
-Source0:  https://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz
-Source1:  https://www.squid-cache.org/Versions/v7/%{name}-%{version}.tar.xz.asc
+Source0:  https://github.com/squid-cache/squid/releases/download/SQUID_7_6/%{name}-%{version}.tar.xz
+Source1:  https://github.com/squid-cache/squid/releases/download/SQUID_7_6/%{name}-%{version}.tar.xz.asc
 Source2:  squid.logrotate
 Source3:  squid.sysconfig
 Source4:  squid.pam
